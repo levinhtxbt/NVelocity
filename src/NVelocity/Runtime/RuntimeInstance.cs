@@ -22,6 +22,7 @@ namespace NVelocity.Runtime
 	using Commons.Collections;
 	using Directive;
 	using Log;
+	using Microsoft.Extensions.DependencyInjection;
 	using NVelocity.Exception;
 	using NVelocity.Runtime.Parser.Node;
 	using NVelocity.Util.Introspection;
@@ -134,7 +135,9 @@ namespace NVelocity.Runtime
 
 		private IDirectiveManager directiveManager;
 
-		public RuntimeInstance()
+		private readonly IServiceProvider _provider;
+
+		public RuntimeInstance(IServiceProvider provider)
 		{
 			// logSystem = new PrimordialLogSystem();
 			configuration = new ExtendedProperties();
@@ -148,6 +151,8 @@ namespace NVelocity.Runtime
 
 			// and a store for the application attributes
 			applicationAttributes = new Hashtable();
+
+			_provider = provider;
 		}
 
 		public ExtendedProperties Configuration
@@ -561,7 +566,8 @@ namespace NVelocity.Runtime
 					String.Format("The type {0} could not be resolved", directiveManagerTypeName));
 			}
 
-			directiveManager = (IDirectiveManager) Activator.CreateInstance(dirMngType);
+			//directiveManager = (IDirectiveManager) Activator.CreateInstance(dirMngType);
+			directiveManager = (IDirectiveManager) ActivatorUtilities.CreateInstance(_provider, dirMngType);
 		}
 
 		/// <summary> Initializes the Velocity parser pool.

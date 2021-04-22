@@ -15,9 +15,9 @@ namespace NVelocity.Runtime.Directive
 	{
 		private readonly TemplateProcess _templateProcess;
 
-		public TemplateDirective()
+		public TemplateDirective(TemplateProcess process)
 		{
-			_templateProcess = new TemplateProcess();
+			_templateProcess = process;
 		}
 
 		public override string Name { get => "template"; set => throw new NotSupportedException(); }
