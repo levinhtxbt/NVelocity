@@ -71,7 +71,14 @@ namespace NVelocity.Runtime
 	/// </version>
 	public class RuntimeSingleton
 	{
-		private static RuntimeInstance ri = new RuntimeInstance();
+		private IServiceProvider _provider;
+		private static RuntimeInstance ri;
+
+		public RuntimeSingleton(IServiceProvider provider)
+		{
+			_provider = provider;
+			ri = new RuntimeInstance(provider);
+		}
 
 		/// <summary>
 		/// This is the primary initialization method in the Velocity

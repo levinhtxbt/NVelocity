@@ -43,14 +43,15 @@ namespace NVelocity.App
 	/// <author> <a href="mailto:geirm@optonline.net">Geir Magnusson Jr.</a></author>
 	public class VelocityEngine
 	{
-		private RuntimeInstance runtimeInstance = new RuntimeInstance();
+		private RuntimeInstance runtimeInstance;
 
 		/// <summary>
 		/// Init-less CTOR
 		/// </summary>
-		public VelocityEngine()
+		public VelocityEngine(IServiceProvider provider)
 		{
 			// do nothing
+			runtimeInstance = new RuntimeInstance(provider);
 		}
 
 		/// <summary>

@@ -14,13 +14,19 @@
 
 namespace NVelocity.Runtime.Directive
 {
+	using Microsoft.Extensions.DependencyInjection;
 	using System;
 	using System.Collections;
 
 	public class DirectiveManager : IDirectiveManager
 	{
 		private readonly IDictionary name2Type = Hashtable.Synchronized(new Hashtable());
+		private readonly IServiceProvider _provider;
 
+		public DirectiveManager(IServiceProvider provider)
+		{
+			_provider = provider;
+		}
 
 		public virtual void Register(String directiveTypeName)
 		{
@@ -33,7 +39,10 @@ namespace NVelocity.Runtime.Directive
 				throw new Exception(string.Format("Could not resolve type {0}", directiveTypeName));
 			}
 
-			Directive directive = (Directive) Activator.CreateInstance(type);
+
+			//Directive directive = (Directive) Activator.CreateInstance(type);
+
+			var directive = (Directive)ActivatorUtilities.CreateInstance(_provider, type);
 
 			name2Type[directive.Name] = type;
 		}
@@ -56,7 +65,8 @@ namespace NVelocity.Runtime.Directive
 			}
 			else
 			{
-				return (Directive) Activator.CreateInstance(type);
+				//return (Directive) Activator.CreateInstance(type);
+				return (Directive) ActivatorUtilities.CreateInstance(_provider, type);
 			}
 
 			return null;
