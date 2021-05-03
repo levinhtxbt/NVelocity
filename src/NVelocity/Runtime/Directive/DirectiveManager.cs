@@ -39,12 +39,10 @@ namespace NVelocity.Runtime.Directive
 				throw new Exception(string.Format("Could not resolve type {0}", directiveTypeName));
 			}
 
-
 			//Directive directive = (Directive) Activator.CreateInstance(type);
-
 			var directive = (Directive)ActivatorUtilities.CreateInstance(_provider, type);
-
 			name2Type[directive.Name] = type;
+			
 		}
 
 		public virtual Directive Create(String name, Stack directiveStack)

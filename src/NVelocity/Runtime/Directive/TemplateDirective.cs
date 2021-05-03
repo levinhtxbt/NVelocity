@@ -1,24 +1,17 @@
-﻿using Microsoft.Extensions.Configuration;
-using Newtonsoft.Json.Linq;
-using NVelocity.Context;
+﻿using NVelocity.Context;
 using NVelocity.Runtime.Parser.Node;
-using NVelocity.Service;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Text;
-using System.Threading.Tasks;
+using NVelocity.Tool;
 
 namespace NVelocity.Runtime.Directive
 {
 	public class TemplateDirective : Directive
 	{
-		private readonly TemplateProcess _templateProcess;
+		private readonly ITemplateLoader _templateLoader;
 
-		public TemplateDirective(TemplateProcess process)
-		{
-			_templateProcess = process;
-		}
+		public TemplateDirective(ITemplateLoader templateLoader)
+			=> (_templateLoader) = (templateLoader);
 
 		public override string Name { get => "template"; set => throw new NotSupportedException(); }
 
@@ -34,7 +27,7 @@ namespace NVelocity.Runtime.Directive
 			{
 				var name = child.Value(context).ToString();
 
-				var html = _templateProcess.GetTemplate(name).Result;
+				var html = _templateLoader.GetTemplate(name);
 
 				var template = new StringTemplate(html);
 
