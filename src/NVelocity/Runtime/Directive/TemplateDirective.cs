@@ -3,15 +3,21 @@ using NVelocity.Runtime.Parser.Node;
 using System;
 using System.IO;
 using NVelocity.Tool;
+using Microsoft.Extensions.Logging;
 
 namespace NVelocity.Runtime.Directive
 {
 	public class TemplateDirective : Directive
 	{
 		private readonly ITemplateLoader _templateLoader;
+		private readonly ILogger<TemplateDirective> _logger;
 
-		public TemplateDirective(ITemplateLoader templateLoader)
-			=> (_templateLoader) = (templateLoader);
+		public TemplateDirective(ITemplateLoader templateLoader, ILogger<TemplateDirective> logger)
+		{
+			_templateLoader = templateLoader;
+			_logger = logger;
+		}
+			
 
 		public override string Name { get => "template"; set => throw new NotSupportedException(); }
 
@@ -19,26 +25,44 @@ namespace NVelocity.Runtime.Directive
 
 		public override bool Render(IInternalContextAdapter context, TextWriter writer, INode node)
 		{
-			var myWriter = new StringWriter();
-
-			var child = node?.GetChild(0);
-
-			if(child != null)
+			try
 			{
-				var name = child.Value(context).ToString();
+				var myWriter = new StringWriter();
 
-				var html = _templateLoader.GetTemplate(name);
+				var child = node?.GetChild(0);
 
-				var template = new StringTemplate(html);
+				if (child != null)
+				{
+					var name = child.Value(context).ToString();
 
-				template.runtimeServices = runtimeServices;
+					_logger.LogInformation($"Template name: {name}");
 
-				if (template.Process())
-					((SimpleNode)template.Data).Render(context, myWriter);
+					var html = _templateLoader.GetTemplate(name);
 
-				writer.WriteLine(myWriter.ToString());
+					if (string.IsNullOrEmpty(html))
+						_logger.LogInformation("Html is null or empty");
+					else
+						_logger.LogInformation(html);
 
-				return true;
+					var template = new StringTemplate(html);
+
+					template.runtimeServices = runtimeServices;
+
+					if (template.Process())
+					{
+						if ((SimpleNode)template.Data == null)
+							_logger.LogError("SimpleNode Template Data is null");
+
+						((SimpleNode)template.Data).Render(context, myWriter);
+					}	
+
+					writer.WriteLine(myWriter.ToString());
+
+					return true;
+				}
+			}catch(System.Exception ex)
+			{
+				_logger.LogError(ex.Message);
 			}
 
 			return false;
