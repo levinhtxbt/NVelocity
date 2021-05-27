@@ -23,9 +23,12 @@ namespace NVelocity.Runtime.Directive
 
 			var child = node?.GetChild(0);
 
-			if(child != null)
+			if(child != null && context != null)
 			{
-				var name = child.Value(context).ToString();
+				var name = child.Value(context)?.ToString();
+
+				if (string.IsNullOrEmpty(name))
+					return false;
 
 				var html = _templateLoader.GetTemplate(name);
 

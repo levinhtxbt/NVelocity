@@ -26,7 +26,7 @@ namespace NVelocity
 			{
 				try
 				{
-					StreamReader reader = new StreamReader(_streamData, System.Text.Encoding.GetEncoding(encoding));
+					StreamReader reader = new StreamReader(_streamData, System.Text.Encoding.GetEncoding("utf-8"));
 
 					data = runtimeServices.Parse(reader, name);
 					InitDocument();
